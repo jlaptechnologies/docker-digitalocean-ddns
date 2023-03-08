@@ -1,0 +1,43 @@
+#!/bin/sh
+
+CONFIGFILE=/root/config.json
+
+if [[ -f "$CONFIGFILE" ]]; then
+    CONFIGDOMAIN=$(jq -r '.domain' $CONFIGFILE)
+    CONFIGDDNSDOMAIN=$(jq -r '.ddns' $CONFIGFILE)
+    CONFIGAPIKEY=$(jq -r '.apikey' $CONFIGFILE)
+else
+    echo "$CONFIGFILE does not exist. Exiting."
+    exit 1
+fi
+
+echo "Attempting to get $CONFIGDDNSDOMAIN of $CONFIGDOMAIN from DigitalOcean API v2"
+
+DOMAINID=$(curl --no-progress-meter \
+-H "Authorization: Bearer $CONFIGAPIKEY" \
+-H 'Content-Type: application/json' \
+    "https://api.digitalocean.com/v2/domains/$CONFIGDOMAIN/records" | \
+  jq '.domain_records | .[] | select(.name=="'"$CONFIGDDNSDOMAIN"'") | .id') || exit 1
+
+if [[ $DOMAINID -lt 4 ]]; then
+    echo "Fetched subdomain ID length incorrect"
+    exit 1
+fi
+
+echo The domain ID is $DOMAINID
+
+MYCURRENTIP=$(curl --no-progress-meter https://api.ipify.org)
+
+echo My current IP is $MYCURRENTIP
+echo Setting $CONFIGDDNSDOMAIN.$CONFIGDOMAIN to $MYCURRENTIP
+
+DOMAINCHANGERESULT=$(curl --no-progress-meter -X PUT \
+-H "Authorization: Bearer $CONFIGAPIKEY" \
+-H 'Content-Type: application/json' \
+-d "{\"data\":\"${MYCURRENTIP}\"}" \
+    "https://api.digitalocean.com/v2/domains/$CONFIGDOMAIN/records/$DOMAINID" | \
+  jq '.')
+
+echo $DOMAINCHANGERESULT
+
+exit 0
