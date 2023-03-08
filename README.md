@@ -2,7 +2,7 @@
 
 ![Docker Pulls](https://img.shields.io/docker/pulls/justinpatchett/docker-digitalocean-ddns)
 
-
+[☕ Buy me a coffee! ☕](https://www.buymeacoffee.com/jlaptech)
 
 ## Description
 
@@ -30,7 +30,7 @@ Minimal Docker image (~13Mb) using Alpine Linux and shell to update a dynamic DN
 
 The token to be used requires write access.
 
-![access-token-scopes.png](access-token-scopes.png)
+![access-token-scopes.png](https://github.com/jlaptechnologies/docker-digitalocean-ddns/raw/master/access-token-scopes.png)
 
 ## Usage
 
@@ -111,3 +111,4 @@ Installs 2 packages: `curl` for network operations and `jq` for shell querying o
 
 Uses [api.ipfy.org](https://www.ipify.org/) to obtain the public ip of the network interface you're using.
 
+[☕ Buy me a coffee! ☕](https://www.buymeacoffee.com/jlaptech)
